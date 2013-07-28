@@ -27,6 +27,7 @@
 }
 .feeds{
 	border: 1px #CDCDCD solid;
+	position: relative;
 }
 .feeds ul{
 	margin: 0;
@@ -73,4 +74,8 @@
 }
 .form{
 	float: left;
+}
+ul#author_posts_container{
+	height: auto;
+	margin-bottom: 20px;
 }

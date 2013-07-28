@@ -6,22 +6,22 @@ require('db.php');
 if(isset($_POST['addnews'])){
 	$news = filter_input(INPUT_POST, 'news', FILTER_SANITIZE_SPECIAL_CHARS);
 	$name = filter_input(INPUT_POST, 'name', FILTER_SANITIZE_SPECIAL_CHARS);
-	$sql = "INSERT INTO news (description, name, date) VALUES ('".$news."', '".$name."', '".date('Y-m-d H:i:s')."')";
-	mysql_query($sql);
+	$query = "INSERT INTO news (description, name, date) VALUES ('".$news."', '".$name."', '".date('Y-m-d H:i:s')."')";
+	mysqli_query($link, $query);
 }
 /**
 * Preparing and getting response for latest feed items.
 **/
 if(isset($_POST['latest_news_time'])){
-	$sql = "SELECT * FROM news WHERE date > '".$_POST['latest_news_time']."' ORDER BY date DESC";
-	$resource = mysql_query($sql);
+	$query = "SELECT * FROM news WHERE date > '".$_POST['latest_news_time']."' ORDER BY date DESC";
+	$resource = mysqli_query($link, $query);
 	$current_time = $_POST['latest_news_time'];
-	$item = mysql_fetch_assoc($resource);
+	$item = mysqli_fetch_assoc($resource);
 	$last_news_time = $item['date'];
 	while ($last_news_time < $current_time) {
 		usleep(1000); //giving some rest to CPU
-		$resource = mysql_query($sql);
-		$item = mysql_fetch_assoc($resource);
+		$resource = mysqli_query($link, $query);
+		$item = mysqli_fetch_assoc($resource);
 		$last_news_time = $item['date'];
 	}
 	?>
@@ -34,13 +34,13 @@ if(isset($_POST['latest_news_time'])){
 /**
 * Getting news Items and preparing sql query with respect to request
 **/
-$sql = "SELECT * FROM news ORDER BY date DESC LIMIT 0, 10";
+$query = "SELECT * FROM news ORDER BY date DESC LIMIT 0, 10";
 if(isset($_POST['last_time'])){
-	$sql = "SELECT * FROM news WHERE date < '".$_POST['last_time']."' ORDER BY date DESC LIMIT 0, 10";
+	$query = "SELECT * FROM news WHERE date < '".$_POST['last_time']."' ORDER BY date DESC LIMIT 0, 10";
 }
-$resource = mysql_query($sql);
+$resource   = mysqli_query($link, $query);
 $news = array();
-while($row = mysql_fetch_assoc($resource)){
+while($row = mysqli_fetch_assoc($resource)){
 	$news[] = $row;
 }
 
@@ -117,7 +117,6 @@ function updateFeed(){
         }) 
 	}
 </script>
-<p><a href="http://feeds.feedburner.com/Techknowlogists"><img src="http://feeds.feedburner.com/~fc/Techknowlogists?bg=99CCFF&amp;fg=444444&amp;anim=0" height="26" width="88" style="border:0" alt="" /></a></p>
 <body>
 	<div class="main_container">
 		<div class="feeds_container">
@@ -139,7 +138,7 @@ function updateFeed(){
 			<form action="" id="add-news-form" method="post">
 				Name : <input name="name" id="name" type="text" /><br>
 				News : <input name="news" id="news" type="text" /><br>
-				<input type="button" onclick="addNews()" value="Add News" />
+				<input type="button" onClick="addNews()" value="Add News" />
 		</div><br><br style="clear: both">
 	</div>
 </body>
